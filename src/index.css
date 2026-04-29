@@ -1,111 +1,91 @@
+/* ======================================================
+   Author: Joachim MASSON
+   For: LMCDO-Front
+   Description: Index stylesheet for general graphic chart
+   ====================================================== */
+
 :root {
-	--text: #6b6375;
-	--text-h: #08060d;
-	--bg: #fff;
-	--border: #e5e4e7;
-	--code-bg: #f4f3ec;
-	--accent: #aa3bff;
-	--accent-bg: rgba(170, 59, 255, 0.1);
-	--accent-border: rgba(170, 59, 255, 0.5);
-	--social-bg: rgba(244, 243, 236, 0.5);
-	--shadow:
-		rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-	--sans: system-ui, "Segoe UI", Roboto, sans-serif;
-	--heading: system-ui, "Segoe UI", Roboto, sans-serif;
-	--mono: ui-monospace, Consolas, monospace;
-
-	font: 18px / 145% var(--sans);
-	letter-spacing: 0.18px;
-	color-scheme: light dark;
-	color: var(--text);
-	background: var(--bg);
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-
-	@media (max-width: 1024px) {
-		font-size: 16px;
-	}
+	/* Variables de couleur*/
+	--primary-color-1: #ffd700; /*Or du Grand Condor - L'or pur, éclatant, symbole du Soleil et de la technologie de Mu.*/
+	--primary-color-2: #004f9f; /*Bleu Lapis-Lazuli - La mer, le ciel profond des Andes, et la couleur des pierres précieuses souvent associées à l'or dans les cultures andines. */
+	--primary-color-3: #ffe033; /*Jaune Solaire - Une version plus douce et chaude de l'or, utilisée pour la lumière du soleil et les intérieurs des cités. */
+	--secondary-color-1: #b2472f; /*Rouge Terre Cuite - Évoque la poterie, les bâtiments d'argile, la chaleur de l'Amérique du Sud.*/
+	--secondary-color-2: #185633; /*Vert Jungle Profond - Pour la végétation dense de l'Amazonie cachant les ruines.*/
+	--secondary-color-3: #7a7a7a; /*Gris Pierre Ancienne - Le granit des Andes et des temples oubliés.*/
+	--accent-color-1: #d64c8a; /*Orichalque - Un magenta/rose vibrant et unique pour représenter le métal d'énergie de Mu (les commandes du Condor, le cœur de la Cité)*/
+	--accent-color-2: #1a1a1a; /*Noir Encre - Pour les contours forts, rappelant le style d'animation original.*/
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--text: #9ca3af;
-		--text-h: #f3f4f6;
-		--bg: #16171d;
-		--border: #2e303a;
-		--code-bg: #1f2028;
-		--accent: #c084fc;
-		--accent-bg: rgba(192, 132, 252, 0.15);
-		--accent-border: rgba(192, 132, 252, 0.5);
-		--social-bg: rgba(47, 48, 58, 0.5);
-		--shadow:
-			rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-	}
-
-	#social .button-icon {
-		filter: invert(1) brightness(2);
-	}
+/*Déclaration des polices d'écriture*/
+@font-face {
+	font-family: "Cinquencento";
+	src: url("./assets/fonts/Cinquecento.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap; /* Permet d'afficher une police système en attendant le chargement */
+}
+@font-face {
+	font-family: "Cinquencento";
+	src: url("./assets/fonts/CinquecentoFilled.ttf") format("truetype");
+	font-weight: normal;
+	font-style: bold;
+}
+@font-face {
+	font-family: "Cinquencento";
+	src: url("./assets/fonts/CinquecentoLight.ttf") format("truetype");
+	font-weight: lighter;
+	font-style: normal;
+}
+@font-face {
+	font-family: "Montserrat";
+	src: url("./assets/fonts/Montserrat-VariableFont_wght.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: "Montserrat";
+	src: url("./assets/fonts/Montserrat-Italic-VariableFont_wght.ttf")
+		format("truetype");
+	font-weight: normal;
+	font-style: italic;
 }
 
-#root {
-	width: 1126px;
-	max-width: 100%;
-	margin: 0 auto;
-	text-align: center;
-	border-inline: 1px solid var(--border);
-	min-height: 100svh;
-	display: flex;
-	flex-direction: column;
+/* ===== RESET LIGHT ===== */
+
+::before,
+*::after {
 	box-sizing: border-box;
+}
+
+html {
+	height: 100%; /* Référence de base pour les % */
+	margin: 0;
+	padding: 0;
 }
 
 body {
 	margin: 0;
-}
-
-h1,
-h2 {
-	font-family: var(--heading);
-	font-weight: 500;
-	color: var(--text-h);
+	padding: 0;
+	background: var(--secondary-color-3);
 }
 
 h1 {
-	font-size: 56px;
-	letter-spacing: -1.68px;
-	margin: 32px 0;
-	@media (max-width: 1024px) {
-		font-size: 36px;
-		margin: 20px 0;
-	}
+	font-family: "Cinquencento", sans-serif;
+	font-weight: 800;
+	font-size: 70px;
+	color: var(--accent-color-2);
 }
-h2 {
-	font-size: 24px;
-	line-height: 118%;
-	letter-spacing: -0.24px;
-	margin: 0 0 8px;
-	@media (max-width: 1024px) {
-		font-size: 20px;
-	}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: "Montserrat", sans-serif;
+	color: var(--accent-color-2);
 }
+
 p {
+	color: var(--accent-color-2);
 	margin: 0;
-}
-
-code,
-.counter {
-	font-family: var(--mono);
-	display: inline-flex;
-	border-radius: 4px;
-	color: var(--text-h);
-}
-
-code {
-	font-size: 15px;
-	line-height: 135%;
-	padding: 4px 8px;
-	background: var(--code-bg);
 }
