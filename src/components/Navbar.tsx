@@ -1,5 +1,13 @@
-function Navbar() {
-	return <h2> Component Navbar</h2>;
-}
+import { NavLink } from "react-router";
 
-export default Navbar;
+export default function Navbar() {
+	return (
+		<nav className="navbar">
+			<h2> Component Navbar</h2>
+			<NavLink to="/home">Accueil</NavLink>
+			<NavLink to="/characters">Personnages</NavLink>
+			<NavLink to="/userManager">Gestion</NavLink>
+			<NavLink to="/connexion">Sing In</NavLink>
+		</nav>
+	);
+}
