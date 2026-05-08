@@ -3,6 +3,7 @@
 	justify-content: space-between;
 	padding: 20px 40px;
 	background-color: var(--secondary-color-2);
+	align-items: center;
 	a {
 		text-decoration: none;
 		color: var(--primary-color-1);
@@ -18,4 +19,13 @@
 }
 a:hover {
 	color: var(--secondary-color-1);
+}
+
+@media screen and (max-width: 768px) {
+	.navbar {
+		flex-direction: column;
+	}
+	.secondNavbar {
+		padding: 20px 0 0 0;
+	}
 }
