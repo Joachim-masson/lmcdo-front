@@ -17,11 +17,11 @@ import UserManager from "./pages/UserManager.tsx";
 const router = createBrowserRouter([
 	{
 		element: <App />, // Renders the App component for the home page
+		errorElement: <Error404 />,
 		children: [
 			{
 				path: "/",
 				element: <Home />,
-				errorElement: <Error404 />,
 			},
 			{
 				path: "/characters",
