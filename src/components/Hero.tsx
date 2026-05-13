@@ -15,7 +15,7 @@ export default function Hero (){
       </div>
       
       <div className="hero-content">
-        <h2>Un Front pour les gouverner tous</h2>
+        <h2>Un Front pour vous mener aux différentes cités d'or</h2>
         <p>
           Bienvenue sur ce projet d'entraînement. Ce front-end, inspiré par l'univers mythique des 
           <strong> Mystérieuses Cités d'Or</strong>, a été conçu comme un terrain d'exercice 
