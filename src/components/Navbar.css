@@ -1,24 +1,43 @@
+/* Navbar.css */
+
 .navbar {
 	display: flex;
 	justify-content: space-between;
-	padding: 20px 40px;
-	background-color: var(--secondary-color-2);
 	align-items: center;
-	a {
-		text-decoration: none;
-		color: var(--primary-color-1);
-	}
+	padding: 1rem 2rem;
+	background-color: var(--secondary-color-2); /* Vert Jungle */
 }
 
 .secondNavbar {
 	display: flex;
-
-	a {
-		padding: 0 10px;
-	}
+	gap: 20px;
+	align-items: center;
 }
-a:hover {
-	color: var(--secondary-color-1);
+
+/* Style commun pour les NavLinks et le bouton de déconnexion */
+.secondNavbar a,
+.navbar a,
+.auth-nav-link {
+	color: var(--primary-color-1); /* Or */
+	text-decoration: none;
+	font-family: "Montserrat", sans-serif;
+	font-weight: bold;
+	font-size: 1rem;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	transition: color 0.3s ease;
+}
+
+.secondNavbar a:hover,
+.auth-nav-link:hover {
+	color: var(--secondary-color-1); /* Rouge terre cuite au survol */
+}
+
+/* Style pour le lien actif */
+.secondNavbar a.active {
+	border-bottom: 2px solid var(--primary-color-1);
 }
 
 @media screen and (max-width: 768px) {
