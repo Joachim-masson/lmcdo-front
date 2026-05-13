@@ -1,0 +1,69 @@
+.characters-page {
+  padding: 40px 20px;
+  min-height: 80vh;
+  background-color: #f4f4f4; /* Fond neutre pour faire ressortir les cartes */
+}
+
+.characters-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.characters-header h1 {
+  margin-bottom: 10px;
+  /* On réutilise tes variables globales si besoin */
+  color: var(--secondary-color-2); 
+}
+
+.characters-header p {
+  font-family: "Montserrat", sans-serif;
+  color: var(--secondary-color-3);
+  font-style: italic;
+}
+
+.characters-grid {
+  display: grid;
+  /* Création d'une grille auto-adaptative */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  justify-items: center; /* Centre les cartes dans leur colonne */
+}
+
+.search-container {
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 25px;
+  border: 2px solid var(--primary-color-1); /* Bordure dorée */
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  background-color: white;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 8px var(--primary-color-1);
+  border-color: var(--secondary-color-1); /* Change de couleur au focus */
+}
+
+.no-result {
+  grid-column: 1 / -1; /* Prend toute la largeur de la grille */
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2rem;
+  color: var(--secondary-color-1);
+  margin-top: 50px;
+}
+
+@media (max-width: 600px) {
+  .characters-grid {
+    grid-template-columns: 1fr;
+  }
+}
