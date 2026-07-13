@@ -4,16 +4,16 @@ import "./UserListPage.css";
 // Définition de l'interface basée sur tes colonnes BDD
 interface UserData {
 	id: number;
-	username: string;
+	name: string;
 	email: string;
-	user_role: string;
-	is_active: boolean;
-	last_login_at: string | null;
-	email_verified_at: string | null;
-	created_at: string;
-	update_at: string;
-	deleted_at: string | null;
-	banned_at: string | null;
+	userRole: string;
+	isActive: boolean;
+	lastLoginAt: string | null;
+	emailVerifiedAt: string | null;
+	createdAt: string;
+	updateAt: string;
+	deletedAt: string | null;
+	bannedAt: string | null;
 }
 
 export default function UserListPage() {
@@ -22,7 +22,7 @@ export default function UserListPage() {
 	const [error, setError] = useState<string | null>(null);
 
 	// Récupération de l'URL depuis les variables d'environnement
-	const API_URL = `${import.meta.env.VITE_API_URL}/user`;
+	const API_URL = `${import.meta.env.VITE_API_URL}/users`;
 
 	useEffect(() => {
 		fetch(API_URL)
@@ -76,8 +76,8 @@ export default function UserListPage() {
 				<section className="manager-grid">
 					{users.map((user) => {
 						// Logique d'affichage des statuts de sécurité
-						const isBanned = user.banned_at !== null;
-						const isDeleted = user.deleted_at !== null;
+						const isBanned = user.bannedAt !== null;
+						const isDeleted = user.deletedAt !== null;
 
 						return (
 							<div
@@ -85,11 +85,11 @@ export default function UserListPage() {
 								className={`manager-card ${isBanned ? "card-banned" : ""} ${isDeleted ? "card-deleted" : ""}`}
 							>
 								<div className="card-header-info">
-									<h3>{user.username}</h3>
+									<h3>{user.name}</h3>
 									<span
-										className={`role-badge role-${user.user_role.toLowerCase()}`}
+										className={`role-badge role-${user.userRole.toLowerCase()}`}
 									>
-										{user.user_role}
+										{user.userRole}
 									</span>
 								</div>
 
@@ -102,11 +102,11 @@ export default function UserListPage() {
 										<strong>Statut :</strong>{" "}
 										{isBanned ? (
 											<span className="status-badge banned">
-												Banni le {formatDate(user.banned_at)}
+												Banni le {formatDate(user.bannedAt)}
 											</span>
 										) : isDeleted ? (
 											<span className="status-badge deleted">Supprimé</span>
-										) : user.is_active ? (
+										) : user.isActive ? (
 											<span className="status-badge active">Actif</span>
 										) : (
 											<span className="status-badge inactive">Inactif</span>
@@ -117,19 +117,19 @@ export default function UserListPage() {
 
 									<p>
 										<strong>Vérifié le :</strong>{" "}
-										{user.email_verified_at
-											? formatDate(user.email_verified_at)
+										{user.emailVerifiedAt
+											? formatDate(user.emailVerifiedAt)
 											: "Non vérifié"}
 									</p>
 									<p>
 										<strong>Dernière connexion :</strong>{" "}
-										{formatDate(user.last_login_at)}
+										{formatDate(user.lastLoginAt)}
 									</p>
 									<p>
-										<strong>Créé le :</strong> {formatDate(user.created_at)}
+										<strong>Créé le :</strong> {formatDate(user.createdAt)}
 									</p>
 									<p>
-										<strong>Modifié le :</strong> {formatDate(user.update_at)}
+										<strong>Modifié le :</strong> {formatDate(user.updateAt)}
 									</p>
 								</div>
 
