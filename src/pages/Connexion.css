@@ -79,3 +79,14 @@
 .toggle-auth-btn:hover {
 	color: var(--primary-color-2);
 }
+
+.error-message {
+	background-color: #ffebee;
+	color: #c62828;
+	padding: 10px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+	font-size: 0.9rem;
+	text-align: left;
+	border-left: 4px solid #c62828;
+}
