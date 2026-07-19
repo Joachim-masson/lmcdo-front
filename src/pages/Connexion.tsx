@@ -67,8 +67,6 @@ export default function Connexion() {
 					name: email.split("@")[0], // Nom temporaire basé sur l'email
 					email: email,
 					password: password, // Transmis au back
-					userRole: "member", // Rôle par défaut
-					isActive: true,
 				};
 
 				const response = await fetch(`${API_URL}/user`, {
