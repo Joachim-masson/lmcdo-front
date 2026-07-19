@@ -33,6 +33,18 @@ export default function UserManager() {
 				</section>
 
 				<section className="manager-card">
+					<h3>Gestion des Utilisateurs</h3>
+					<p>Ajouter, modifier ou supprimer des explorateurs des Cités d'Or.</p>
+					<button
+						type="button"
+						onClick={() => navigate("/userListPage")}
+						className="btn-secondary"
+					>
+						Gérer les utilisateurs
+					</button>
+				</section>
+
+				<section className="manager-card">
 					<h3>Paramètres du compte</h3>
 					<p>Modifier vos informations personnelles ou votre mot de passe.</p>
 					<button className="btn-secondary" type="button">

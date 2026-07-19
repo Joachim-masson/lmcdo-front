@@ -1,6 +1,7 @@
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router";
-import { StrictMode } from "react";
+
 import "./index.css";
 import App from "./App.tsx";
 
@@ -13,6 +14,8 @@ import Home from "./pages/Home.tsx";
 import LegalNotice from "./pages/LegalNotice.tsx";
 import Rgpd from "./pages/Rgpd.tsx";
 import UserManager from "./pages/UserManager.tsx";
+import UpdateCharacter from "./pages/UpdateCharacter.tsx";
+import UserListPage from "./pages/UserListPage.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -48,6 +51,20 @@ const router = createBrowserRouter([
 				element: (
 					//					<ProtectedRoute requiredRole="fullAdmin">
 					<UserManager />
+					//					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/update-character",
+				element: (
+					<UpdateCharacter />
+					//					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/userListPage",
+				element: (
+					<UserListPage />
 					//					</ProtectedRoute>
 				),
 			},
