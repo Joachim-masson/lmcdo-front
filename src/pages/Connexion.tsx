@@ -6,6 +6,7 @@ export default function Connexion() {
 	const [isLogin, setIsLogin] = useState(true);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
 
@@ -33,12 +34,18 @@ export default function Connexion() {
 			);
 			return;
 		}
-		// 2. Validation du Mot de passe (Uniquement à l'Inscription pour ne pas bloquer les vieux mots de passe)
-		if (!isLogin && !validatePassword(password)) {
-			setError(
-				"Le mot de passe doit faire au moins 16 caractères et contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial.",
-			);
-			return;
+		// 2. Validations spécifiques à l'Inscription
+		if (!isLogin) {
+			// Vérification des règles de sécurité
+			if (!validatePassword(password)) {
+				setError("Le mot de passe ne respecte pas les critères de sécurité.");
+				return;
+			}
+			// Vérification de la correspondance des deux mots de passe
+			if (password !== confirmPassword) {
+				setError("Les deux mots de passe ne correspondent pas.");
+				return;
+			}
 		}
 
 		const API_URL = `${import.meta.env.VITE_API_URL}`;
@@ -84,6 +91,7 @@ export default function Connexion() {
 				// Succès : On bascule sur l'écran de connexion avec un message
 				setIsLogin(true);
 				setPassword("");
+				setConfirmPassword(""); // On vide aussi la confirmation
 				alert(
 					"Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
 				);
@@ -115,6 +123,39 @@ export default function Connexion() {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 					/>
+					{/* Affichage des règles et du deuxième champ uniquement à l'inscription */}
+					{!isLogin && (
+						<>
+							<div className="password-requirements">
+								<p>Le mot de passe doit contenir au moins :</p>
+								<ul>
+									<li className={password.length >= 16 ? "valid" : ""}>
+										16 caractères
+									</li>
+									<li className={/[A-Z]/.test(password) ? "valid" : ""}>
+										Une majuscule
+									</li>
+									<li className={/[a-z]/.test(password) ? "valid" : ""}>
+										Une minuscule
+									</li>
+									<li className={/\d/.test(password) ? "valid" : ""}>
+										Un chiffre
+									</li>
+									<li className={/[@$!%*?&]/.test(password) ? "valid" : ""}>
+										Un caractère spécial (@, $, !, %, *, ?, &)
+									</li>
+								</ul>
+							</div>
+
+							<input
+								type="password"
+								placeholder="Confirmez le mot de passe"
+								required
+								value={confirmPassword}
+								onChange={(e) => setConfirmPassword(e.target.value)}
+							/>
+						</>
+					)}
 					<button type="submit" className="btn-gold">
 						{isLogin ? "Rejoindre l'aventure" : "Créer mon compte"}
 					</button>

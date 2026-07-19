@@ -90,3 +90,30 @@
 	text-align: left;
 	border-left: 4px solid #c62828;
 }
+
+.password-requirements {
+	text-align: left;
+	font-size: 0.85rem;
+	color: #666;
+	margin: -5px 0 15px 5px;
+}
+
+.password-requirements p {
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+.password-requirements ul {
+	list-style-type: "• ";
+	padding-left: 15px;
+	margin: 0;
+}
+
+.password-requirements li {
+	color: #cc0000; /* Rouge par défaut si non valide */
+	transition: color 0.2s ease;
+}
+
+.password-requirements li.valid {
+	color: #008800; /* Vert dès que l'utilisateur tape un caractère valide */
+}
