@@ -122,6 +122,56 @@ export default function UserListPage() {
 		}
 	};
 
+	// --- LOGIQUE DE SUPPRESSION ---
+	const handleDelete = async (id: number) => {
+		const userToDelete = users.find((u) => u.id === id);
+		const userName = userToDelete ? userToDelete.name : "l'utilisateur";
+
+		if (
+			!window.confirm(
+				`⚠️ ATTENTION : Êtes-vous sûr de vouloir supprimer définitivement l'explorateur "${userName}" ? Ses données seront anonymisées.`,
+			)
+		) {
+			return;
+		}
+
+		const now = new Date().toISOString();
+
+		try {
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/user/${id}`,
+				{
+					method: "DELETE", // Correspond à la route Back
+					headers: { "Content-Type": "application/json" },
+				},
+			);
+
+			if (!response.ok) throw new Error("Erreur lors de la suppression.");
+
+			// On met à jour l'état local avec les valeurs anonymisées renvoyées/attendues
+			setUsers((prevUsers) =>
+				prevUsers.map((user) =>
+					user.id === id
+						? {
+								...user,
+								name: `DeletedUser_${id}`,
+								email: `deleted_${id}@lmcdo.local`,
+								isActive: false,
+								deletedAt: now,
+							}
+						: user,
+				),
+			);
+			triggerNotification(
+				`L'explorateur "${userName}" a été supprimé.`,
+				"success",
+			);
+		} catch (err) {
+			console.error(err);
+			triggerNotification("Impossible de supprimer l'explorateur.", "error");
+		}
+	};
+
 	// --- LOGIQUE D'ÉDITION ---
 	const handleOpenEdit = (user: UserData) => {
 		setEditingUser(user);
@@ -249,12 +299,14 @@ export default function UserListPage() {
 									</p>
 									<p>
 										<strong>Statut :</strong>{" "}
-										{isBanned ? (
+										{isDeleted ? (
+											<span className="status-badge deleted">
+												Supprimé le {formatDate(user.deletedAt)}
+											</span>
+										) : isBanned ? (
 											<span className="status-badge banned">
 												Banni le {formatDate(user.bannedAt)}
 											</span>
-										) : isDeleted ? (
-											<span className="status-badge deleted">Supprimé</span>
 										) : user.isActive ? (
 											<span className="status-badge active">Actif</span>
 										) : (
@@ -283,14 +335,16 @@ export default function UserListPage() {
 								</div>
 
 								<div className="card-actions">
-									<button
-										type="button"
-										className="btn-action"
-										onClick={() => handleOpenEdit(user)}
-										disabled={isDeleted}
-									>
-										Modifier
-									</button>
+									{!isDeleted && (
+										<button
+											type="button"
+											className="btn-action"
+											onClick={() => handleOpenEdit(user)}
+											disabled={isDeleted}
+										>
+											Modifier
+										</button>
+									)}
 									{!isBanned && !isDeleted && (
 										<button
 											type="button"
@@ -298,6 +352,15 @@ export default function UserListPage() {
 											onClick={() => handleBan(user.id)}
 										>
 											Bannir
+										</button>
+									)}
+									{!isDeleted && (
+										<button
+											type="button"
+											className="btn-danger"
+											onClick={() => handleDelete(user.id)}
+										>
+											Supprimer
 										</button>
 									)}
 								</div>
