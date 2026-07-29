@@ -2,16 +2,11 @@
 
 .navbar {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 	align-items: center;
 	padding: 1rem 2rem;
 	background-color: var(--secondary-color-2); /* Vert Jungle */
-}
-
-.secondNavbar {
-	display: flex;
 	gap: 20px;
-	align-items: center;
 }
 
 /* Style commun pour les NavLinks et le bouton de déconnexion */

@@ -1,0 +1,138 @@
+/* ======================================================
+   Styles spécifiques pour la page ProfileSettings
+   ====================================================== */
+
+/* Formulaires dans les cartes */
+.profile-form {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	width: 100%;
+}
+
+.form-group label {
+	font-family: "Montserrat", sans-serif;
+	font-size: 0.9rem;
+	font-weight: bold;
+	color: var(--accent-color-2);
+}
+
+.form-group input {
+	width: 100%;
+	padding: 12px 14px;
+	font-family: "Montserrat", sans-serif;
+	font-size: 0.95rem;
+	border: 1.5px solid #ddd;
+	border-radius: 8px;
+	background-color: #fcfcfc;
+	color: var(--accent-color-2);
+	transition:
+		border-color 0.3s ease,
+		box-shadow 0.3s ease;
+	box-sizing: border-box;
+}
+
+.form-group input:focus {
+	outline: none;
+	border-color: var(--primary-color-2); /* Bleu Lapis-Lazuli */
+	box-shadow: 0 0 0 3px rgba(0, 79, 159, 0.15);
+	background-color: #ffffff;
+}
+
+/* Checklist des exigences du mot de passe */
+.password-requirements {
+	background-color: #f8f9fa;
+	border: 1px solid #e9ecef;
+	border-radius: 8px;
+	padding: 14px;
+	font-size: 0.85rem;
+}
+
+.password-requirements p {
+	font-weight: bold;
+	margin-bottom: 8px;
+	color: var(--secondary-color-3);
+	font-size: 0.85rem;
+}
+
+.password-requirements ul {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.password-requirements li {
+	position: relative;
+	padding-left: 22px;
+	color: var(--secondary-color-3); /* Gris par défaut */
+	transition:
+		color 0.3s ease,
+		font-weight 0.3s ease;
+}
+
+.password-requirements li::before {
+	content: "✕";
+	position: absolute;
+	left: 0;
+	color: var(--secondary-color-1); /* Rouge Terre Cuite (Invalide) */
+	font-weight: bold;
+}
+
+.password-requirements li.valid {
+	color: var(--secondary-color-2); /* Vert Jungle Profond (Validé) */
+	font-weight: 600;
+}
+
+.password-requirements li.valid::before {
+	content: "✓";
+	color: var(--secondary-color-2); /* Vert Jungle */
+}
+
+/* Indication sous le champ de confirmation */
+.field-error-hint {
+	font-size: 0.8rem;
+	color: var(--secondary-color-1);
+	margin-top: 2px;
+}
+
+/* Messages de statut (Succès / Erreur) */
+.form-message {
+	padding: 10px 14px;
+	border-radius: 6px;
+	font-size: 0.88rem;
+	font-family: "Montserrat", sans-serif;
+	text-align: center;
+}
+
+.form-message.success {
+	background-color: rgba(24, 86, 51, 0.1);
+	color: var(--secondary-color-2);
+	border: 1px solid var(--secondary-color-2);
+}
+
+.form-message.error {
+	background-color: rgba(178, 71, 47, 0.1);
+	color: var(--secondary-color-1);
+	border: 1px solid var(--secondary-color-1);
+}
+
+/* Boutons désactivés */
+.btn-action:disabled {
+	background-color: var(--secondary-color-3);
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.btn-action:disabled:hover {
+	opacity: 0.6;
+}
