@@ -10,7 +10,7 @@
 }
 
 /* Style commun pour les NavLinks et le bouton de déconnexion */
-.secondNavbar a,
+
 .navbar a,
 .auth-nav-link {
 	color: var(--primary-color-1); /* Or */
@@ -25,13 +25,13 @@
 	transition: color 0.3s ease;
 }
 
-.secondNavbar a:hover,
+.navbar a:hover,
 .auth-nav-link:hover {
 	color: var(--secondary-color-1); /* Rouge terre cuite au survol */
 }
 
 /* Style pour le lien actif */
-.secondNavbar a.active {
+.navbar a.active {
 	border-bottom: 2px solid var(--primary-color-1);
 }
 

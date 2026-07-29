@@ -57,9 +57,10 @@ export default function Connexion() {
 				});
 
 				if (!response.ok) {
-					throw new Error(
-						"Combinaison Identifiants/mot de passe incorrects ou compte inactif.",
-					);
+					if (response.status === 401) {
+						throw new Error("Email ou mot de passe incorrect.");
+					}
+					throw new Error("Une erreur est survenue lors de la connexion.");
 				}
 
 				const userData = await response.json();
