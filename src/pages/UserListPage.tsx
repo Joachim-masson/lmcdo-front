@@ -372,12 +372,13 @@ export default function UserListPage() {
 
 			{/* MODALE D'ÉDITION */}
 			{editingUser && (
-				<button
-					type="button"
-					className="modal-overlay"
-					onClick={handleCloseEdit}
-					aria-label="Fermer la modale"
-				>
+				<div className="modal-overlay">
+					<button
+						type="button"
+						className="modal-backdrop-btn"
+						onClick={handleCloseEdit}
+						aria-label="Fermer la modale"
+					/>
 					<div
 						className="modal-content"
 						onClick={(e) => e.stopPropagation()}
@@ -448,7 +449,7 @@ export default function UserListPage() {
 							</div>
 						</form>
 					</div>
-				</button>
+				</div>
 			)}
 		</main>
 	);

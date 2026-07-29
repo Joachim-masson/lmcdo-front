@@ -212,22 +212,20 @@
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.6);
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	z-index: 1000;
-	backdrop-filter: blur(3px); /* Effet moderne optionnel */
 }
 
 .modal-content {
-	background-color: white;
+	position: relative;
+	z-index: 1;
+	background: white;
 	padding: 30px;
 	border-radius: 12px;
+	max-width: 500px;
 	width: 90%;
-	max-width: 450px;
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-	animation: slideIn 0.3s ease-out;
 }
 
 .modal-content h2 {
@@ -381,4 +379,18 @@
 .btn-danger:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
+}
+
+/* Bouton qui sert de fond sombre cliquable */
+.modal-backdrop-btn {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	margin: 0;
 }
