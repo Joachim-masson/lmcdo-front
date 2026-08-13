@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
+
 import "./UserManager.css";
 
 export default function UserManager() {
 	const navigate = useNavigate();
-	const userName = localStorage.getItem("userName") || "Explorateur";
+	const user = useAuth();
+	const userName = user.user?.name || "Explorateur";
 
 	const handleLogout = () => {
 		localStorage.clear();
