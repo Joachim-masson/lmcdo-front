@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import "./UpdateCharacter.css";
+import { useAuth } from "../context/AuthContext";
 
 interface CharacterData {
 	id: number;
@@ -30,6 +31,8 @@ export default function UpdateCharacter() {
 		origin: "",
 		picture: "",
 	});
+
+	const user = useAuth();
 
 	const API_URL = import.meta.env.VITE_API_URL;
 
@@ -88,7 +91,7 @@ export default function UpdateCharacter() {
 	// 3. Gestion de la Création via Modal
 
 	// TODO: Remplacer plus tard par le vrai utilisateur connecté via ton système d'Auth
-	const TEMPORARY_MOCK_USER_ID = 1;
+	const userId = user.user?.id;
 	const handleCreateCharacter = async (e: FormEvent) => {
 		e.preventDefault();
 		if (!newChar.name.trim()) {
@@ -100,13 +103,16 @@ export default function UpdateCharacter() {
 			...newChar,
 			age: newChar.age === "" ? 0 : Number(newChar.age),
 			createdAt: new Date().toISOString(), // Date de création
-			creatorUserId: TEMPORARY_MOCK_USER_ID, // ID Utilisateur connecté
+			createdBy: user.user ? { id: user.user.id } : null,
 		};
 
 		try {
 			const response = await fetch(`${API_URL}/character`, {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
+
+				headers: {
+					"Content-Type": "application/json",
+				},
 				body: JSON.stringify(payload),
 			});
 
