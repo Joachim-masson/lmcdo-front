@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import CarChar from "../components/CarChar";
 import "./Characters.css";
-import AddChar from "../components/AddChar";
 
 // Définition du type pour tes personnages
 interface CharacterData {
@@ -16,26 +15,24 @@ export default function Characters() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [characters, setCharacters] = useState<CharacterData[]>([]);
 
-	const [isModalOpen, setIsModalOpen] = useState(false);
-
 	const API_URL = `${import.meta.env.VITE_API_URL}/characters`;
 
 	//Charge tous les personnages
-	const fetchCharacters = () => {
-		fetch(API_URL)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
-				}
-				return response.json();
-			})
-			.then((data) => {
-				setCharacters(data);
-			})
-			.catch((err) => console.error("Erreur fetch:", err));
-	};
 
 	useEffect(() => {
+		const fetchCharacters = () => {
+			fetch(API_URL)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
+					}
+					return response.json();
+				})
+				.then((data) => {
+					setCharacters(data);
+				})
+				.catch((err) => console.error("Erreur fetch:", err));
+		};
 		fetchCharacters();
 	}, []);
 
@@ -59,14 +56,6 @@ export default function Characters() {
 						onChange={(e) => setSearchTerm(e.target.value)}
 						className="search-input"
 					/>
-					{/* 3. Ouverture de la modale au clic */}
-					<button
-						type="button"
-						className="add-character-btn"
-						onClick={() => setIsModalOpen(true)}
-					>
-						+ Ajouter un personnage
-					</button>
 				</div>
 				<p>Retrouvez les héros et antagonistes de la quête des cités d'or.</p>
 			</header>
@@ -88,36 +77,6 @@ export default function Characters() {
 					</p>
 				)}
 			</section>
-			{/* 4. Affichage conditionnel de la Modale */}
-			{isModalOpen && (
-				<button
-					type="button"
-					className="modal-overlay"
-					onClick={() => setIsModalOpen(false)}
-				>
-					<button
-						type="button"
-						className="modal-content"
-						onClick={(e) => e.stopPropagation()}
-					>
-						<button
-							type="button"
-							className="modal-close-btn"
-							onClick={() => setIsModalOpen(false)}
-						>
-							✖
-						</button>
-
-						<AddChar
-							onClose={() => setIsModalOpen(false)}
-							onSuccess={() => {
-								setIsModalOpen(false);
-								fetchCharacters(); // Recharge la liste après l'ajout d'un personnage
-							}}
-						/>
-					</button>
-				</button>
-			)}
 		</main>
 	);
 }
