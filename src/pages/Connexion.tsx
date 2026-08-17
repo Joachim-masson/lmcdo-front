@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import "./Connexion.css";
 
 export default function Connexion() {
@@ -10,14 +11,15 @@ export default function Connexion() {
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
 
-	// Validations Regex
+	// On récupère la fonction login depuis le contexte
+	const { login } = useAuth();
+
 	const validateEmail = (emailStr: string) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(emailStr);
 	};
 
 	const validatePassword = (passwordStr: string) => {
-		// Au moins 16 caractères, 1 Majuscule, 1 Minuscule, 1 Chiffre, 1 Caractère spécial
 		const passwordRegex =
 			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{16,}$/;
 		return passwordRegex.test(passwordStr);
@@ -27,21 +29,16 @@ export default function Connexion() {
 		e.preventDefault();
 		setError("");
 
-		// 1. Validation de l'adresse Email (Pour Connexion & Inscription)
 		if (!validateEmail(email)) {
-			setError(
-				"Veuillez saisir une adresse email valide (ex: utilisateur@domaine.com).",
-			);
+			setError("Veuillez saisir une adresse email valide.");
 			return;
 		}
-		// 2. Validations spécifiques à l'Inscription
+
 		if (!isLogin) {
-			// Vérification des règles de sécurité
 			if (!validatePassword(password)) {
 				setError("Le mot de passe ne respecte pas les critères de sécurité.");
 				return;
 			}
-			// Vérification de la correspondance des deux mots de passe
 			if (password !== confirmPassword) {
 				setError("Les deux mots de passe ne correspondent pas.");
 				return;
@@ -49,11 +46,10 @@ export default function Connexion() {
 		}
 
 		const API_URL = `${import.meta.env.VITE_API_URL}`;
-		// Redirection vers le gestionnaire d'utilisateurs
 
 		try {
 			if (isLogin) {
-				// --- CAS : CONNEXION ---
+				// --- CONNEXION ---
 				const response = await fetch(`${API_URL}/login`, {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -61,19 +57,23 @@ export default function Connexion() {
 				});
 
 				if (!response.ok) {
-					throw new Error("Identifiants incorrects ou compte inactif.");
+					if (response.status === 401) {
+						throw new Error("Email ou mot de passe incorrect.");
+					}
+					throw new Error("Une erreur est survenue lors de la connexion.");
 				}
 
-				const data = await response.json();
-				localStorage.setItem("userToken", "fake-jwt-token-mu"); // Remplacer par data.token si JWT implémenté
-				localStorage.setItem("userName", data.name || email.split("@")[0]);
+				const userData = await response.json();
+
+				// Sauvegarde de l'objet User complet dans le AuthContext
+				login(userData);
 				navigate("/userManager");
 			} else {
-				// --- CAS : INSCRIPTION ---
+				// --- INSCRIPTION ---
 				const payload = {
-					name: email.split("@")[0], // Nom temporaire basé sur l'email
+					name: email.split("@")[0],
 					email: email,
-					password: password, // Transmis au back
+					password: password,
 				};
 
 				const response = await fetch(`${API_URL}/user`, {
@@ -88,13 +88,18 @@ export default function Connexion() {
 					);
 				}
 
-				// Succès : On bascule sur l'écran de connexion avec un message
-				setIsLogin(true);
-				setPassword("");
-				setConfirmPassword(""); // On vide aussi la confirmation
-				alert(
-					"Compte créé avec succès ! Vous pouvez maintenant vous connecter.",
-				);
+				const newUser = await response.json();
+
+				// Option A : Connecter l'utilisateur automatiquement après inscription
+				login(newUser);
+				navigate("/userManager");
+
+				/* Option B : Si vous préférez le basculer sur l'écran login, décommentez ceci :
+        setIsLogin(true);
+        setPassword("");
+        setConfirmPassword("");
+        alert("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+        */
 			}
 		} catch (err: any) {
 			setError(err.message || "Une erreur est survenue.");
@@ -123,7 +128,7 @@ export default function Connexion() {
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 					/>
-					{/* Affichage des règles et du deuxième champ uniquement à l'inscription */}
+
 					{!isLogin && (
 						<>
 							<div className="password-requirements">
@@ -156,10 +161,12 @@ export default function Connexion() {
 							/>
 						</>
 					)}
+
 					<button type="submit" className="btn-gold">
 						{isLogin ? "Rejoindre l'aventure" : "Créer mon compte"}
 					</button>
 				</form>
+
 				<button
 					type="button"
 					onClick={() => {

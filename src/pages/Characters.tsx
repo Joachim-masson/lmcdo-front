@@ -11,22 +11,6 @@ interface CharacterData {
 	picture: string;
 }
 
-// const CHARACTERS_MOCK: CharacterData[] = [
-// 	{ id: 1, name: "Esteban", age: 12, origin: "Atlante", image: "" },
-// 	{ id: 2, name: "Zia", age: 11, origin: "Inca", image: "" },
-// 	{ id: 3, name: "Tao", age: 13, origin: "Muen", image: "" },
-// 	{
-// 		id: 4,
-// 		name: "Juan Carlos Mendoza",
-// 		age: 28,
-// 		origin: "Espagnol",
-// 		image: "",
-// 	},
-// 	{ id: 5, name: "Pedro", age: "", origin: "Espagnol", image: "" },
-// 	{ id: 6, name: "Sancho", age: "", origin: "Espagnol", image: "" },
-// 	{ id: 7, name: "Gomez", age: "", origin: "Espagnol", image: "" },
-// ];
-
 export default function Characters() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [characters, setCharacters] = useState<CharacterData[]>([]);
@@ -34,18 +18,22 @@ export default function Characters() {
 	const API_URL = `${import.meta.env.VITE_API_URL}/characters`;
 
 	//Charge tous les personnages
+
 	useEffect(() => {
-		fetch(API_URL)
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
-				}
-				return response.json();
-			})
-			.then((data) => {
-				setCharacters(data);
-			})
-			.catch((err) => console.error("Erreur fetch:", err));
+		const fetchCharacters = () => {
+			fetch(API_URL)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
+					}
+					return response.json();
+				})
+				.then((data) => {
+					setCharacters(data);
+				})
+				.catch((err) => console.error("Erreur fetch:", err));
+		};
+		fetchCharacters();
 	}, []);
 
 	const filteredCharacters = characters.filter((char) => {

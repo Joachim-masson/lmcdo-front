@@ -12,10 +12,13 @@ import Contact from "./pages/Contact.tsx";
 import Error404 from "./pages/Error404.tsx";
 import Home from "./pages/Home.tsx";
 import LegalNotice from "./pages/LegalNotice.tsx";
+import ProfileSettings from "./pages/ProfileSettings.tsx";
 import Rgpd from "./pages/Rgpd.tsx";
 import UserManager from "./pages/UserManager.tsx";
 import UpdateCharacter from "./pages/UpdateCharacter.tsx";
 import UserListPage from "./pages/UserListPage.tsx";
+import { AuthProvider } from "./context/AuthContext.tsx";
+import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -49,23 +52,33 @@ const router = createBrowserRouter([
 			{
 				path: "/userManager",
 				element: (
-					//					<ProtectedRoute requiredRole="fullAdmin">
-					<UserManager />
-					//					</ProtectedRoute>
+					<ProtectedRoute allowedRoles={["MEMBER"]}>
+						<UserManager />
+					</ProtectedRoute>
 				),
 			},
 			{
-				path: "/update-character",
+				path: "/updateCharacter",
 				element: (
-					<UpdateCharacter />
-					//					</ProtectedRoute>
+					<ProtectedRoute allowedRoles={["MODERATOR"]}>
+						<UpdateCharacter />
+					</ProtectedRoute>
 				),
 			},
 			{
 				path: "/userListPage",
 				element: (
-					<UserListPage />
-					//					</ProtectedRoute>
+					<ProtectedRoute allowedRoles={["ADMIN"]}>
+						<UserListPage />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: "/profileSettings",
+				element: (
+					<ProtectedRoute allowedRoles={["MEMBER"]}>
+						<ProfileSettings />
+					</ProtectedRoute>
 				),
 			},
 		],
@@ -81,6 +94,8 @@ if (rootElement == null) {
 // Render the app inside the root element
 createRoot(rootElement).render(
 	<StrictMode>
-		<RouterProvider router={router} />
+		<AuthProvider>
+			<RouterProvider router={router} />
+		</AuthProvider>
 	</StrictMode>,
 );
