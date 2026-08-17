@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import "./UserListPage.css";
 
-// Définition de l'interface basée sur tes colonnes BDD
+// Interface alignée avec le multi-rôles
 interface UserData {
 	id: number;
 	name: string;
 	email: string;
-	userRole: string;
+	roles: string[];
 	isActive: boolean;
 	lastLoginAt: string | null;
 	emailVerifiedAt: string | null;
@@ -16,27 +16,25 @@ interface UserData {
 	bannedAt: string | null;
 }
 
-// Interface pour gérer nos messages de succès/erreur
 interface ToastNotification {
 	message: string;
 	type: "success" | "error";
 }
+
+// Liste des rôles disponibles dans votre application
+const AVAILABLE_ROLES = ["MEMBER", "MODERATOR", "ADMIN"];
 
 export default function UserListPage() {
 	const [users, setUsers] = useState<UserData[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 
-	// État pour la notification
 	const [notification, setNotification] = useState<ToastNotification | null>(
 		null,
 	);
-
-	// États pour la modale d'édition
 	const [editingUser, setEditingUser] = useState<UserData | null>(null);
 	const [editForm, setEditForm] = useState<Partial<UserData>>({});
 
-	// Récupération de l'URL depuis les variables d'environnement
 	const API_URL = `${import.meta.env.VITE_API_URL}/users`;
 
 	useEffect(() => {
@@ -58,15 +56,13 @@ export default function UserListPage() {
 			});
 	}, []);
 
-	// Fonction pour déclencher une notification temporaire
 	const triggerNotification = (message: string, type: "success" | "error") => {
 		setNotification({ message, type });
 		setTimeout(() => {
 			setNotification(null);
-		}, 3500); // Disparaît après 3,5 secondes
+		}, 3500);
 	};
 
-	// Fonction utilitaire pour formater joliment les dates ISO de la BDD
 	const formatDate = (dateString: string | null) => {
 		if (!dateString) return "Jamais";
 		return new Date(dateString).toLocaleDateString("fr-FR", {
@@ -78,7 +74,6 @@ export default function UserListPage() {
 		});
 	};
 
-	// --- LOGIQUE DE BANNISSEMENT ---
 	const handleBan = async (id: number) => {
 		const userToBan = users.find((u) => u.id === id);
 		const userName = userToBan ? userToBan.name : "l'utilisateur";
@@ -90,7 +85,6 @@ export default function UserListPage() {
 		const payload = { isActive: false, bannedAt: now };
 
 		try {
-			// Ajuste la méthode "PATCH" ou "PUT" selon ton backend => PUT
 			const response = await fetch(
 				`${import.meta.env.VITE_API_URL}/user/${id}`,
 				{
@@ -102,13 +96,11 @@ export default function UserListPage() {
 
 			if (!response.ok) throw new Error("Erreur lors du bannissement.");
 
-			// Mise à jour de l'état local pour éviter de recharger toute la page
 			setUsers((prevUsers) =>
 				prevUsers.map((user) =>
 					user.id === id ? { ...user, ...payload } : user,
 				),
 			);
-			// Notification de succès !
 			triggerNotification(
 				`L'explorateur "${userName}" a été banni avec succès.`,
 				"success",
@@ -122,7 +114,6 @@ export default function UserListPage() {
 		}
 	};
 
-	// --- LOGIQUE DE SUPPRESSION ---
 	const handleDelete = async (id: number) => {
 		const userToDelete = users.find((u) => u.id === id);
 		const userName = userToDelete ? userToDelete.name : "l'utilisateur";
@@ -141,14 +132,13 @@ export default function UserListPage() {
 			const response = await fetch(
 				`${import.meta.env.VITE_API_URL}/user/${id}`,
 				{
-					method: "DELETE", // Correspond à la route Back
+					method: "DELETE",
 					headers: { "Content-Type": "application/json" },
 				},
 			);
 
 			if (!response.ok) throw new Error("Erreur lors de la suppression.");
 
-			// On met à jour l'état local avec les valeurs anonymisées renvoyées/attendues
 			setUsers((prevUsers) =>
 				prevUsers.map((user) =>
 					user.id === id
@@ -172,13 +162,12 @@ export default function UserListPage() {
 		}
 	};
 
-	// --- LOGIQUE D'ÉDITION ---
 	const handleOpenEdit = (user: UserData) => {
 		setEditingUser(user);
 		setEditForm({
 			name: user.name,
 			email: user.email,
-			userRole: user.userRole,
+			roles: user.roles ? [...user.roles] : ["MEMBER"],
 			isActive: user.isActive,
 		});
 	};
@@ -188,26 +177,43 @@ export default function UserListPage() {
 		setEditForm({});
 	};
 
-	const handleFormChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-	) => {
-		const { name, value, type } = e.target;
+	const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value, type, checked } = e.target;
 
-		// Gérer les cases à cocher spécifiquement
 		if (type === "checkbox") {
-			const checked = (e.target as HTMLInputElement).checked;
 			setEditForm((prev) => ({ ...prev, [name]: checked }));
 		} else {
 			setEditForm((prev) => ({ ...prev, [name]: value }));
 		}
 	};
 
+	// Gestion de l'ajout / retrait d'un rôle dans la liste
+	const handleRoleToggle = (role: string) => {
+		setEditForm((prev) => {
+			const currentRoles = prev.roles ? [...prev.roles] : [];
+			const roleUpper = role.toUpperCase();
+
+			const updatedRoles = currentRoles.includes(roleUpper)
+				? currentRoles.filter((r) => r !== roleUpper) // On le retire si déjà présent
+				: [...currentRoles, roleUpper]; // On l'ajoute sinon
+
+			return { ...prev, roles: updatedRoles };
+		});
+	};
+
 	const handleSaveEdit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!editingUser) return;
 
-		// Ajout de la date de modification
-		const payload = { ...editForm, updateAt: new Date().toISOString() };
+		// Assurer qu'au moins 1 rôle est conservé (sécurité facultative)
+		const rolesToSend =
+			editForm.roles && editForm.roles.length > 0 ? editForm.roles : ["MEMBER"];
+
+		const payload = {
+			...editForm,
+			roles: rolesToSend,
+			updateAt: new Date().toISOString(),
+		};
 
 		try {
 			const response = await fetch(
@@ -221,14 +227,13 @@ export default function UserListPage() {
 
 			if (!response.ok) throw new Error("Erreur lors de la modification.");
 
-			// Mise à jour de l'état local
+			// Mise à jour de l'état local avec la nouvelle liste de rôles
 			setUsers((prevUsers) =>
 				prevUsers.map((user) =>
 					user.id === editingUser.id ? { ...user, ...payload } : user,
 				),
 			);
 			handleCloseEdit();
-			// Notification de succès !
 			triggerNotification(
 				`Le profil de "${payload.name}" a été mis à jour.`,
 				"success",
@@ -244,7 +249,6 @@ export default function UserListPage() {
 
 	return (
 		<main className="manager-page">
-			{/* COMPOSANT NOTIFICATION TOAST */}
 			{notification && (
 				<div
 					className={`toast-notification toast-${notification.type}`}
@@ -286,11 +290,27 @@ export default function UserListPage() {
 							>
 								<div className="card-header-info">
 									<h3>{user.name}</h3>
-									<span
-										className={`role-badge role-${user.userRole.toLowerCase()}`}
+									{/* Affichage de tous les rôles de l'utilisateur */}
+									<div
+										className="roles-container"
+										style={{
+											display: "flex",
+											gap: "0.25rem",
+											flexWrap: "wrap",
+										}}
 									>
-										{user.userRole}
-									</span>
+										{(user.roles && user.roles.length > 0
+											? user.roles
+											: ["MEMBER"]
+										).map((role) => (
+											<span
+												key={role}
+												className={`role-badge role-${role.toLowerCase()}`}
+											>
+												{role}
+											</span>
+										))}
+									</div>
 								</div>
 
 								<div className="user-details">
@@ -412,18 +432,50 @@ export default function UserListPage() {
 								/>
 							</label>
 
-							<label>
-								Rôle :
-								<select
-									name="userRole"
-									value={editForm.userRole || ""}
-									onChange={handleFormChange}
+							{/* SÉLECTION MULTI-RÔLES AVEC CHECKBOXES */}
+							<fieldset
+								style={{
+									border: "1px solid #ccc",
+									padding: "0.75rem",
+									borderRadius: "6px",
+									margin: "0.5rem 0",
+								}}
+							>
+								<legend style={{ fontWeight: "bold" }}>
+									Rôles attribués :
+								</legend>
+								<div
+									style={{
+										display: "flex",
+										gap: "1rem",
+										flexWrap: "wrap",
+										marginTop: "0.25rem",
+									}}
 								>
-									<option value="USER">Utilisateur</option>
-									<option value="MODERATOR">Modérateur</option>
-									<option value="ADMIN">Administrateur</option>
-								</select>
-							</label>
+									{AVAILABLE_ROLES.map((role) => {
+										const isChecked = editForm.roles?.includes(role) ?? false;
+										return (
+											<label
+												key={role}
+												style={{
+													display: "flex",
+													alignItems: "center",
+													gap: "0.25rem",
+													cursor: "pointer",
+												}}
+											>
+												<input
+													type="checkbox"
+													value={role}
+													checked={isChecked}
+													onChange={() => handleRoleToggle(role)}
+												/>
+												{role}
+											</label>
+										);
+									})}
+								</div>
+							</fieldset>
 
 							<label className="checkbox-label">
 								<input

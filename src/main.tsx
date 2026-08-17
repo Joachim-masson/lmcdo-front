@@ -18,6 +18,7 @@ import UserManager from "./pages/UserManager.tsx";
 import UpdateCharacter from "./pages/UpdateCharacter.tsx";
 import UserListPage from "./pages/UserListPage.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
+import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
 	{
@@ -51,30 +52,33 @@ const router = createBrowserRouter([
 			{
 				path: "/userManager",
 				element: (
-					//					<ProtectedRoute requiredRole="fullAdmin">
-					<UserManager />
-					//					</ProtectedRoute>
+					<ProtectedRoute allowedRoles={["MODERATOR"]}>
+						<UserManager />
+					</ProtectedRoute>
 				),
 			},
 			{
 				path: "/updateCharacter",
 				element: (
-					<UpdateCharacter />
-					//					</ProtectedRoute>
+					<ProtectedRoute allowedRoles={["MODERATOR"]}>
+						<UpdateCharacter />
+					</ProtectedRoute>
 				),
 			},
 			{
 				path: "/userListPage",
 				element: (
-					<UserListPage />
-					//					</ProtectedRoute>
+					<ProtectedRoute allowedRoles={["ADMIN"]}>
+						<UserListPage />
+					</ProtectedRoute>
 				),
 			},
 			{
 				path: "/profileSettings",
 				element: (
-					<ProfileSettings />
-					//					</ProtectedRoute>
+					<ProtectedRoute allowedRoles={["MEMBER"]}>
+						<ProfileSettings />
+					</ProtectedRoute>
 				),
 			},
 		],
