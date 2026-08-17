@@ -1,19 +1,12 @@
 import React, { useState } from "react";
 import "./ProfileSettings.css";
+import { useAuth } from "../context/AuthContext";
 
-interface ProfileSettingsProps {
-	initialUsername?: string;
-	onSaveUsername?: (newUsername: string) => Promise<void> | void;
-	onSavePassword?: (newPassword: string) => Promise<void> | void;
-}
+export const ProfileSettings: React.FC = () => {
+	const { user, updateUser } = useAuth();
 
-export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
-	initialUsername = "Esteban",
-	onSaveUsername,
-	onSavePassword,
-}) => {
 	// États pour le nom d'utilisateur
-	const [username, setUsername] = useState<string>(initialUsername);
+	const [username, setUsername] = useState<string>(user?.name || "Explorateur");
 	const [usernameMessage, setUsernameMessage] = useState<{
 		text: string;
 		type: "success" | "error";
@@ -29,7 +22,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 	} | null>(null);
 	const [isUpdatingPassword, setIsUpdatingPassword] = useState<boolean>(false);
 
-	// Validation du mot de passe selon les règles
+	// Validation du mot de passe
 	const isLengthValid = password.length >= 16;
 	const hasUppercase = /[A-Z]/.test(password);
 	const hasLowercase = /[a-z]/.test(password);
@@ -44,6 +37,14 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 		e.preventDefault();
 		setUsernameMessage(null);
 
+		if (!user?.id) {
+			setUsernameMessage({
+				text: "Session utilisateur introuvable. Veuillez vous reconnecter.",
+				type: "error",
+			});
+			return;
+		}
+
 		if (!username.trim()) {
 			setUsernameMessage({
 				text: "Le nom d'utilisateur ne peut pas être vide.",
@@ -54,14 +55,29 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
 		try {
 			setIsUpdatingUsername(true);
-			if (onSaveUsername) {
-				await onSaveUsername(username);
+
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/user/${user.id}`,
+				{
+					method: "PUT",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ name: username.trim() }),
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Erreur lors de la sauvegarde du nom.");
 			}
+
+			// Mise à jour du contexte local et du localStorage
+			updateUser({ name: username.trim() });
+
 			setUsernameMessage({
 				text: "Nom d'utilisateur mis à jour avec succès !",
 				type: "success",
 			});
 		} catch (err) {
+			console.error(err);
 			setUsernameMessage({
 				text: "Erreur lors de la mise à jour du nom d'utilisateur.",
 				type: "error",
@@ -75,6 +91,14 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 	const handlePasswordSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setPasswordMessage(null);
+
+		if (!user?.id) {
+			setPasswordMessage({
+				text: "Session utilisateur introuvable. Veuillez vous reconnecter.",
+				type: "error",
+			});
+			return;
+		}
 
 		if (!isPasswordValid) {
 			setPasswordMessage({
@@ -94,9 +118,20 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
 		try {
 			setIsUpdatingPassword(true);
-			if (onSavePassword) {
-				await onSavePassword(password);
+
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/user/${user.id}`,
+				{
+					method: "PUT",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ password }),
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Erreur lors du changement de mot de passe.");
 			}
+
 			setPasswordMessage({
 				text: "Mot de passe modifié avec succès !",
 				type: "success",
@@ -104,6 +139,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 			setPassword("");
 			setConfirmPassword("");
 		} catch (err) {
+			console.error(err);
 			setPasswordMessage({
 				text: "Erreur lors du changement de mot de passe.",
 				type: "error",
